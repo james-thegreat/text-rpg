@@ -59,7 +59,7 @@ jobs:
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'realtimechat-api-James-Dunlop'
+          app-name: 'realtimechat-api-james-dunlop-b9hxa9d7hfb2e8ea'
           slot-name: 'Production'
           package: .
           
