@@ -15,6 +15,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: List project files
+        run: Get-ChildItem -Recurse -Filter *.csproj
+
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
