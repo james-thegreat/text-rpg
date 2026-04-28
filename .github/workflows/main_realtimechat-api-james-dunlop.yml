@@ -1,63 +1,34 @@
-name: Build and deploy ASP.NET Core app to Azure Web App
+name: Build and Deploy API
 
 on:
   push:
     branches:
       - main
-  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: windows-latest
-    permissions:
-      contents: read
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: List project files
-        run: Get-ChildItem -Recurse -Filter *.csproj
-
-      - name: Set up .NET Core
+      - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
 
-      - name: Build API
+      - name: Restore dependencies
+        run: dotnet restore server/RealTimeChat.Api/RealTimeChat.Api.csproj
+
+      - name: Build
         run: dotnet build server/RealTimeChat.Api/RealTimeChat.Api.csproj --configuration Release
 
-      - name: Publish API
-        run: dotnet publish server/RealTimeChat.Api/RealTimeChat.Api.csproj -c Release -o "${{ env.DOTNET_ROOT }}/myapp"
+      - name: Publish
+        run: dotnet publish server/RealTimeChat.Api/RealTimeChat.Api.csproj -c Release -o ./publish
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{ env.DOTNET_ROOT }}/myapp
-
-  deploy:
-    runs-on: windows-latest
-    needs: build
-    permissions:
-      id-token: write
-      contents: read
-
-    steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: .net-app
-
-      - name: Login to Azure
-        uses: azure/login@v2
-        with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_1493990255E0492B928AE7308EC2D3DB }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_604788DD659E4376A934315E2DD3E970 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_BC5CDF89138749E1AC4EC16C50F8EA52 }}
-
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
-        with:
-          app-name: 'realtimechat-api-james-dunlop-b9hxa9d7hfb2e8ea'
-          slot-name: 'Production'
-          package: .
+          name: api-build
+          path: ./publish
