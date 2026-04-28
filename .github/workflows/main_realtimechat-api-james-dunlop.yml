@@ -14,13 +14,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. DEBUG: Show what files exist in GitHub runner
-      - name: Show repo files
+      # 2. DEBUG: Show what GitHub actually sees
+      - name: Show repo structure (DEBUG)
         run: |
           echo "Current directory:"
           pwd
-          echo "Root files:"
-          ls
+          echo "Root contents:"
+          ls -la
+          echo "Server folder:"
+          ls -la server || echo "NO SERVER FOLDER FOUND"
           echo "All .csproj files:"
           find . -name "*.csproj"
 
@@ -42,7 +44,7 @@ jobs:
       - name: Publish
         run: dotnet publish server/RealTimeChat.Api/RealTimeChat.Api.csproj -c Release -o ./publish
 
-      # 7. Upload artifact (optional but useful)
+      # 7. Upload artifact
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
