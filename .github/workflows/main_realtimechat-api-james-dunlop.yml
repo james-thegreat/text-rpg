@@ -10,23 +10,39 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 1. Checkout repo
       - name: Checkout code
         uses: actions/checkout@v4
 
+      # 2. DEBUG: Show what files exist in GitHub runner
+      - name: Show repo files
+        run: |
+          echo "Current directory:"
+          pwd
+          echo "Root files:"
+          ls
+          echo "All .csproj files:"
+          find . -name "*.csproj"
+
+      # 3. Setup .NET
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '9.x'
 
+      # 4. Restore
       - name: Restore dependencies
         run: dotnet restore server/RealTimeChat.Api/RealTimeChat.Api.csproj
 
+      # 5. Build
       - name: Build
         run: dotnet build server/RealTimeChat.Api/RealTimeChat.Api.csproj --configuration Release
 
+      # 6. Publish
       - name: Publish
         run: dotnet publish server/RealTimeChat.Api/RealTimeChat.Api.csproj -c Release -o ./publish
 
+      # 7. Upload artifact (optional but useful)
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
