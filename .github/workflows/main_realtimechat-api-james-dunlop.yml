@@ -9,10 +9,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: realtime-chat
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,10 +30,10 @@ jobs:
         run: dotnet build server/RealTimeChat.Api/RealTimeChat.Api.csproj --configuration Release
 
       - name: Publish
-        run: dotnet publish server/RealTimeChat.Api/RealTimeChat.Api.csproj -c Release -o ../publish
+        run: dotnet publish server/RealTimeChat.Api/RealTimeChat.Api.csproj -c Release -o ./publish
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: api-build
-          path: publish
+          path: ./publish
